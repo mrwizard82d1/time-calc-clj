@@ -20,10 +20,23 @@
         end start]
     (Task. start end details)))
 
+(defn zip
+  "Equivalent of Python zip()."
+  [& colls]
+  (apply map vector colls))
+
+(defn join-tasks
+  "Creates a contiguous time range for tasks."
+  [tasks]
+  (let [zipped-tasks (zip tasks (drop 1 tasks))]
+    (map #(Task. (:start (%1 0)) (:start (%1 1)) (:details (%1 0)))
+         zipped-tasks)))
+
 (defn lines->tasks
   "Convert a sequences of lines to tasks."
   [line-seq]
-  (map line->task line-seq))
+  (let [raw-tasks (map line->task line-seq)]
+    (join-tasks raw-tasks)))
 
 (defn read-all-lines
   "Read all lines from a file."
