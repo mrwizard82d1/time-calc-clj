@@ -90,9 +90,13 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (let [filename "../time_calc/time.txt"]
-    (doseq [[details duration] (summarize-tasks
-                               (lines->tasks (read-all-lines
-                                              filename)))]
-      (println details duration))))
+  (let [filename (if args
+                   (first args)
+                   "../time_calc/time.txt")
+        summary (summarize-tasks
+                      (lines->tasks (read-all-lines
+                                     filename)))]
+    (doseq [[details duration]
+            (sort-by first summary)]
+      (println (format "%-8s %5.2f" details (float duration))))))
 
