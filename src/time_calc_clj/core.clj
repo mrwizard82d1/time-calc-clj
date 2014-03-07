@@ -92,7 +92,7 @@
   [& args]
   (let [filename (if args
                    (first args)
-                   "../time_calc/time.txt")
+                   "./time.txt")
         summary (summarize-tasks
                       (lines->tasks (read-all-lines
                                      filename)))]

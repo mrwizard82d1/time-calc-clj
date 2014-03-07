@@ -220,3 +220,8 @@ pip-log.txt
 .lein-repl-history
 .nrepl-port
 target
+
+# Ignored data files for reporting time.
+time.txt
+time-sprint.txt
+
