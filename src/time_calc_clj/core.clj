@@ -37,10 +37,11 @@
 (defn interval->decimal-interval
   "Converts a TimeInterval to a decimal value of hours."
   [{hours :hours mins :mins}]
-  (cond (or (between? mins 0 8) (between? mins 53 60)) hours
+  (cond (between? mins 0 8) hours
         (between? mins 8 23) (+ hours 0.25)
         (between? mins 23 38) (+ hours 0.5)
-        (between? mins 39 54) (+ hours 0.75)))
+        (between? mins 39 54) (+ hours 0.75)
+        (between? mins 53 60) (+ hours 1)))
 
 (defn summarize-tasks
   "Summarize a sequence of tasks."
