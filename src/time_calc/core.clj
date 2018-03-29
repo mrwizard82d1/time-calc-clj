@@ -1,4 +1,4 @@
-(ns time-calc-clj.core
+(ns time-calc.core
   (:gen-class))
 
 (defn in-filename [args]
