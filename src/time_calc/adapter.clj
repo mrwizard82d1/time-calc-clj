@@ -11,10 +11,28 @@
 (defn parse-date [month-day-text]
   (jt/month-day "dd-MMM" month-day-text))
 
-(defn activities-by-day [lines]
+(defn extract-activity-date [activity-on-day]
+  (parse-date (activity-month-date-text (first (first activity-on-day)))))
+
+(defn parse-time [hh-mm-time]
+  (jt/local-time "HHmm" hh-mm-time))
+
+(defn extract-start [activity-text]
+  (->> (first (str/split activity-text #"\s+"))
+       (parse-time)))
+
+(defn extract-details [activity-text]
+  (second (str/split activity-text #"\s+" 2)))
+
+(defn extract-activities [activity-on-day]
+  (->> (second activity-on-day)
+       (map #(vector (extract-start %)
+                     (extract-details %)))))
+
+(defn parse-activities-by-date [lines]
   (->> lines
        no-empty-lines
        (partition-by #(re-find #"#\s+(\d{2}-\w{3})" %))
        (partition 2)
-       (map #(vector (parse-date (activity-month-date-text (first (first %)))) (second %)))
-       (into {} )))
+       (map #(vector (extract-activity-date %)
+                     (extract-activities %)))))
