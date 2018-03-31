@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [clojure.java-time "0.3.1"]]
+                 [clojure.java-time "0.3.2-SNAPSHOT"]]
   :main ^:skip-aot time-calc.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
