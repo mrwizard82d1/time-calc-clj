@@ -43,12 +43,20 @@
                                                    (jt/as activity-day :month-of-year :day-of-month)))
                       activity-time))
 
-(defn lines->activities-in-pieces [lines]
-  "Make a sequence of activities from `lines`."
-  (let [activity-map (parse-activities-by-date lines)]
-    (apply concat (for [[day activities-with-start-time] activity-map]
-                   (let [activity-time #(first %)
-                         activity-details #(second %)]
-                     (map #(vector (make-activity-stamp day (activity-time %))
-                                   (activity-details %))
-                          activities-with-start-time))))))
+(defn activities-by-day-with-complete-start-times [activity-map]
+  "Transform a sequence of lines to a map of activities for each day."
+  (let [activity-time #(first %)
+        activity-details #(second %)]
+    (for [[day activities-with-start-time] activity-map]
+      (map #(vector (make-activity-stamp day (activity-time %))
+                    (activity-details %))
+           activities-with-start-time))))
+
+(defn create-activities-by-day [the-lines]
+  "Create a map of activities"
+  (->> (-> the-lines
+           (parse-activities-by-date)
+           (activities-by-day-with-complete-start-times))
+       (apply concat)
+       (group-by #(jt/local-date (first %)))))
+
