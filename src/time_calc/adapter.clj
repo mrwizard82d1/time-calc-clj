@@ -36,3 +36,19 @@
        (partition 2)
        (map #(vector (extract-activity-date %)
                      (extract-activities %)))))
+
+(defn make-activity-stamp [activity-day activity-time]
+  "Construct a date time stamp for an activity from its day and its time."
+  (jt/local-date-time (apply jt/local-date (concat [(jt/as (jt/year) :year)]
+                                                   (jt/as activity-day :month-of-year :day-of-month)))
+                      activity-time))
+
+(defn lines->activities-in-pieces [lines]
+  "Make a sequence of activities from `lines`."
+  (let [activity-map (parse-activities-by-date lines)]
+    (apply concat (for [[day activities-with-start-time] activity-map]
+                   (let [activity-time #(first %)
+                         activity-details #(second %)]
+                     (map #(vector (make-activity-stamp day (activity-time %))
+                                   (activity-details %))
+                          activities-with-start-time))))))
