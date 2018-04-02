@@ -26,7 +26,21 @@
        (apply concat)
        (group-by #(jt/local-date (first %)))))
 
+(defn durations [details]
+  (let [start-time first]
+    (map #(jt/duration (start-time %1) (start-time %2)) details (drop 1 details))))
+
+(defn add-durations-to-details [details]
+  (let [details-durations (durations details)]
+    (map #(conj %1 %2) details details-durations)))
+
+(defn add-durations-to-grouped-activities [grouped-activities]
+  (into (sorted-map)
+        (for [[day details] grouped-activities]
+          [day (add-durations-to-details details)])))
+
 (defn parsed-activities->activities [parsed-activities]
   (->> parsed-activities
        (parsed-activities->stamped-activities)
-       (stamped-activities->grouped-activities)))
+       (stamped-activities->grouped-activities)
+       (add-durations-to-grouped-activities)))
