@@ -35,9 +35,7 @@
     (map #(conj %1 %2) details details-durations)))
 
 (defn add-durations-to-grouped-activities [grouped-activities]
-  (into (sorted-map)
-        (for [[day details] grouped-activities]
-          [day (add-durations-to-details details)])))
+  (update-values grouped-activities add-durations-to-details))
 
 (defn parsed-activities->activities [parsed-activities]
   (->> parsed-activities
