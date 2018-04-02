@@ -7,18 +7,26 @@
                                                    (jt/as activity-day :month-of-year :day-of-month)))
                       activity-time))
 
-(defn activities-by-day-with-complete-start-times [activity-map]
-  "Transform a sequence of lines to a map of activities for each day."
+(defn parsed-activities->stamped-activities [parsed-activities]
+  "Transform a sequence of parsed activities to activities with time stamps."
   (let [activity-time #(first %)
         activity-details #(second %)]
-    (for [[day activities-with-start-time] activity-map]
+    (for [[day activities-with-start-time] parsed-activities]
       (map #(vector (make-activity-stamp day (activity-time %))
                     (activity-details %))
            activities-with-start-time))))
 
-(defn create-activities-by-day-map [parsed-activities]
+(defn update-values [m f & args]
+  "A generic function to update the values in a map."
+  (into {} (for [[k v] m] [k (apply f v args)])))
+
+(defn stamped-activities->grouped-activities [stamped-activities]
   "Create a map of activities"
-  (->> (-> parsed-activities
-           (activities-by-day-with-complete-start-times))
+  (->> stamped-activities
        (apply concat)
        (group-by #(jt/local-date (first %)))))
+
+(defn parsed-activities->activities [parsed-activities]
+  (->> parsed-activities
+       (parsed-activities->stamped-activities)
+       (stamped-activities->grouped-activities)))
