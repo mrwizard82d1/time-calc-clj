@@ -10,7 +10,7 @@
                     (jt/plus (get %1 (details %2) (jt/duration))
                              (duration %2)))
             {}
-            details-with-durations)))
+            (filter #(not (= (details %) "out"))  details-with-durations))))
 
 (defn summarize-details-with-durations-for-day [grouped-activities-with-durations]
   (tc.h/update-values grouped-activities-with-durations
