@@ -1,5 +1,6 @@
 (ns time-calc.adapter.translate
-  (:require [java-time :as jt]))
+  (:require [time-calc.helpers :as tc.h]
+            [java-time :as jt]))
 
 (def start-time first)
 
@@ -21,10 +22,6 @@
                     (details %))
            activities-with-start-time)))
 
-(defn update-values [m f & args]
-  "A generic function to update the values in a map."
-  (into {} (for [[k v] m] [k (apply f v args)])))
-
 (defn stamped-activities->grouped-activities [stamped-activities]
   "Create a map of activities"
   (let [activity-date first]
@@ -40,23 +37,10 @@
     (map #(conj %1 %2) details details-durations)))
 
 (defn add-durations-to-grouped-activities [grouped-activities]
-  (update-values grouped-activities add-durations-to-details))
+  (tc.h/update-values grouped-activities add-durations-to-details))
 
-(defn summarize-details-with-durations [details-with-durations]
-  (reduce #(assoc %1
-                  (details %2)
-                  (jt/plus (get %1 (details %2) (jt/duration))
-                           (duration %2)))
-          {}
-          details-with-durations))
-
-(defn summarize-details-with-durations-for-day [grouped-activities-with-durations]
-  (update-values grouped-activities-with-durations
-                 summarize-details-with-durations))
-
-(defn parsed-activities->activities [parsed-activities]
+(defn parsed-activities->activities-with-durations-by-day [parsed-activities]
   (->> parsed-activities
        (parsed-activities->stamped-activities)
        (stamped-activities->grouped-activities)
-       (add-durations-to-grouped-activities)
-       (summarize-details-with-durations-for-day)))
+       (add-durations-to-grouped-activities)))

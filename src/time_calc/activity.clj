@@ -1,19 +1,20 @@
 (ns time-calc.activity
-  (:require [java-time :as jt]))
+  (:require [time-calc.helpers :as tc.h]
+            [java-time :as jt]))
 
-(def start-time first)
+(defn summarize-details-with-durations [details-with-durations]
+  (let [details second
+        duration #(get % 2)]
+    (reduce #(assoc %1
+                    (details %2)
+                    (jt/plus (get %1 (details %2) (jt/duration))
+                             (duration %2)))
+            {}
+            details-with-durations)))
 
-(defn durations [activities]
-  (map #(jt/duration (start-time %1) (start-time %2)) activities (drop 1 activities)))
+(defn summarize-details-with-durations-for-day [grouped-activities-with-durations]
+  (tc.h/update-values grouped-activities-with-durations
+                      summarize-details-with-durations))
 
-(defn summarize-activities [activities]
-  (map conj activities (durations activities)))
-
-(defn summarize-activities-by-day [activities-by-day]
-  (let [activity-day first
-        activities second]
-    (into (sorted-map)
-          (reduce #(assoc
-                     %1
-                     (activity-day %2)
-                     (summarize-activities (activities %2))) {} activities-by-day))))
+(defn grouped-activities-with-durations->activities [grouped-activities-with-durations-by-day]
+  (summarize-details-with-durations-for-day grouped-activities-with-durations-by-day))

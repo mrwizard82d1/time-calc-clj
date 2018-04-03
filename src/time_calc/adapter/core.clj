@@ -5,4 +5,4 @@
 (defn lines->activities [the-lines]
   (->> the-lines
        (tc.a.parse/parse-activities-by-date)
-       (tc.a.translate/parsed-activities->activities)))
+       (tc.a.translate/parsed-activities->activities-with-durations-by-day)))
