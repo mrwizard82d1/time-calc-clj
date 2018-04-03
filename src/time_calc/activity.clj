@@ -16,5 +16,5 @@
   (tc.h/update-values grouped-activities-with-durations
                       summarize-details-with-durations))
 
-(defn grouped-activities-with-durations->activities [grouped-activities-with-durations-by-day]
+(defn summarize-activities [grouped-activities-with-durations-by-day]
   (summarize-details-with-durations-for-day grouped-activities-with-durations-by-day))
